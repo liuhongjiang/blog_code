@@ -18,7 +18,7 @@ class svm_params:
 params = svm_params()
 e_dict = []
 
-#train_data = "svm.train_mix_ok"
+#train_data = "svm.train_new"
 train_data = "svm.train"
 
 def loaddata():

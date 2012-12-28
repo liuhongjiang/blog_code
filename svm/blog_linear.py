@@ -14,9 +14,9 @@ if __name__ == "__main__":
 
     # 控制产生的样本点是否能够被一条直线划分开
     # control the samples can be separated by a line 
-    separable = False
+    separable = True
 
-    data_fn = "svm.train"
+    data_fn = "svm.train_new"
 
     samples = []
     negative = 0
@@ -26,6 +26,9 @@ if __name__ == "__main__":
         x1 = random.randint(20, 80)
         x2 = random.randint(20, 80)
         label = x2 - (x1 * w + 80) 
+        if separable == True and label < 3 and label > -3:
+            i -= 1
+            continue
         if label > 0:
             if label < 10 and random.randint(0,100) < 30 and separable == False:
                 label = -1
@@ -63,8 +66,8 @@ if __name__ == "__main__":
     lp_x2 = []
     lp_x2up = []
     lp_x2down = []
-    w = w + 0.15
-    b = b -10
+    w = w 
+    b = b
     for x1 in lp_x1:
         lp_x2.append(w * x1 + b)
         lp_x2up.append((w - 0.07) * x1 + b + 4)

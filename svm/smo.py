@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# SMO的一个简单实现
+# implement SMO
+
 import sys
 import math
 import matplotlib.pyplot as plt
@@ -15,8 +18,8 @@ class svm_params:
 params = svm_params()
 e_dict = []
 
-train_data = "svm.train_mix_ok"
-#train_data = "svm.train"
+#train_data = "svm.train_mix_ok"
+train_data = "svm.train"
 
 def loaddata():
     fn = open(train_data,"r")
@@ -28,6 +31,7 @@ def loaddata():
         params.a.append(0.0)
     fn.close()
 
+# linear
 def kernel(j, i):
     ret = 0.0
     for idx in range(len(samples[j])):
@@ -49,24 +53,6 @@ def update_e_dict():
     for i in range(len(params.a)):
         e_dict[i] = predict_real_diff(i)
 
-def find_another_param(ret_max):
-    max_ei = e_dict[0]
-    max_idx = 0
-    min_ei = e_dict[0]
-    min_idx = 0
-    for i in range(len(e_dict)):
-        if e_dict[i] > max_ei:
-            max_ei = e_dict[i] 
-            max_idx = i
-        if e_dict[i] < min_ei:
-            min_ei = e_dict[i]
-            min_idx = i
-    
-    if ret_max:
-        return max_idx
-    else:
-        return min_idx
-
 def train(tolerance, times, C):
     time = 0
     init_e_dict()
@@ -77,6 +63,7 @@ def train(tolerance, times, C):
         for i in range(len(params.a)):
             ai = params.a[i]
             Ei = e_dict[i]
+            # 违反KKT
             # agaist the KKT
             if (labels[i] * Ei < -tolerance and ai < C) or (labels[i] * Ei > tolerance and ai > 0):
                 for j in range(len(params.a)):
@@ -97,14 +84,20 @@ def train(tolerance, times, C):
                         new_aj = H
                     if new_aj < L:
                         new_aj = L
-                    new_ai = params.a[i] + labels[i] * labels[j] * (params.a[j] - new_aj)   # f7.109 
+                    # 《统计学习方法》公式7.109（下同）
+                    # formula 7.109
+                    new_ai = params.a[i] + labels[i] * labels[j] * (params.a[j] - new_aj)
 
+                    # 第二个变量下降是否达到最小步长
+                    # decline enough for new_aj
                     if abs(params.a[j] - new_aj) < 0.001:
                         print "j = %d, is not moving enough" % j
                         continue
 
-                    new_b1 = params.b - e_dict[i] - labels[i]*kernel(i,i)*(new_ai-params.a[i]) - labels[j]*kernel(j,i)*(new_aj-params.a[j]) # f.115
-                    new_b2 = params.b - e_dict[j] - labels[i]*kernel(i,j)*(new_ai-params.a[i]) - labels[j]*kernel(j,j)*(new_aj-params.a[j]) # f.116
+                    # formula 7.115
+                    new_b1 = params.b - e_dict[i] - labels[i]*kernel(i,i)*(new_ai-params.a[i]) - labels[j]*kernel(j,i)*(new_aj-params.a[j]) 
+                    # formula 7.116
+                    new_b2 = params.b - e_dict[j] - labels[i]*kernel(i,j)*(new_ai-params.a[i]) - labels[j]*kernel(j,j)*(new_aj-params.a[j]) 
                     if new_ai > 0 and new_ai < C: new_b = new_b1
                     elif new_aj > 0 and new_aj < C: new_b = new_b2
                     else: new_b = (new_b1 + new_b2) / 2.0
@@ -116,12 +109,12 @@ def train(tolerance, times, C):
                     updated = True
                     print "iterate: %d, changepair: i: %d, j:%d" %(time, i, j)
 
-def draw(toler, C):
+def draw(tolerance, C):
     plt.xlabel(u"x1")
     plt.xlim(0, 100)
     plt.ylabel(u"x2")
     plt.ylim(0, 100)
-    plt.title("SVM - %s, toler %f, C %f" % (train_data, toler, C))
+    plt.title("SVM - %s, tolerance %f, C %f" % (train_data, tolerance, C))
     ftrain = open(train_data, "r")
     for line in ftrain:
         line = line[:-1]
@@ -130,7 +123,6 @@ def draw(toler, C):
             plt.plot(sam[0],sam[1], 'or')
         else:
             plt.plot(sam[0],sam[1], 'og')
-        #plt.plot(sam[0],sam[1], 'ok')
     
     w1 = 0.0 
     w2 = 0.0
@@ -159,11 +151,13 @@ if __name__ == "__main__":
     loaddata()
     print samples
     print labels
+    # 惩罚系数
     # penalty for mis classify
     C = 10
     # 计算精度
-    toler = 0.0001
-    train(toler, 100, C)
+    # computational accuracy 
+    tolerance = 0.0001
+    train(tolerance, 100, C)
     print "a = ", params.a
     print "b = ", params.b
     support =  []
@@ -171,4 +165,4 @@ if __name__ == "__main__":
         if params.a[i] > 0 and params.a[i] < C:
             support.append(samples[i])
     print "support vector = ", support
-    draw(toler, C)
+    draw(tolerance, C)

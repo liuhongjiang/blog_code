@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Pegasos inplemented in Python
+# Pegasos implemented in Python
 
 import os
 import sys
@@ -27,9 +27,7 @@ def predict(model, data):
 def train_one_model(data, label, sampleNum, modelNum):
     pvalue = predict(G_WEIGHT[modelNum], data)
     # the hinge loss
-    #print pvalue
     if pvalue * label >= 1:
-        print "not update"
         return
     
     # update model
@@ -50,16 +48,13 @@ def train_one_model(data, label, sampleNum, modelNum):
             G_WEIGHT[modelNum][i] = new_weight[i]/(norm2 * math.sqrt(lambd)) 
     else:
         G_WEIGHT[modelNum] = new_weight
-    #print "updated"
 
 def train_one_sample(data, num, sampleNum):
     for modelNum in range(10):
         label = -1
         if num == modelNum:
             label = 1
-        #print "label=", label
         train_one_model(data, label, sampleNum, modelNum)
-    #sys.exit(0)
 
 if __name__== "__main__":
     for i in range(10):

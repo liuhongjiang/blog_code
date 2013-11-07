@@ -1,0 +1,30 @@
+extends layout
+
+block content
+    if success
+        div.alert.alert-success= success
+    if error
+        div.alert.alert-error= error
+        
+    form.form-horizontal(method='post')
+        fieldset
+            legend 用户注册
+            div.control-group
+                label.control-label(for='username') 用户名
+                div.controls
+                    input.input-xlarge#username(type='text' name='username')
+                    p.help-block 你的帐号名称，用于登录和显示
+    
+            div.control-group
+                label.control-label(for='password') 口令
+                div.controls
+                    input.input-xlarge#password(type='password' name='password')
+    
+            div.control-group
+                label.control-label(for='password-repeat') 重复输入口令
+                div.controls
+                    input.input-xlarge#password-repeat(type='password' name='password-repeat')
+    
+            div.form-actions
+                button.btn.btn-primary(type='submit') 注册
+    

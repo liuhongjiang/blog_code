@@ -1,0 +1,25 @@
+mixin oneblock(myposts)
+    div.row
+        - each post in myposts
+            div.span4
+                h2
+                    a(href='/u/#{post.user}')= post.user
+                    | 说
+                p
+                    small= post.time
+                p= post.post
+
+- var splitPosts = [] 
+
+
+each post, idx in posts
+    if idx % 3 == 0
+        if splitPosts.length != 0 
+            +oneblock(splitPosts) 
+            - splitPosts = []
+    - splitPosts.push(post)
+
+
+if splitPosts.length != 0 
+    +oneblock(splitPosts) 
+    - splitPosts = []

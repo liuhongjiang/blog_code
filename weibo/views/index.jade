@@ -1,0 +1,17 @@
+extends layout
+
+block content
+    if success
+        div.alert.alert-success= success
+    if error
+        div.alert.alert-error= error
+    if !user
+        div.hero-unit
+            h1 欢迎来到Microblog
+            p Microblog 是一个基于 Node.js的微博系统
+            p
+                a.btn.btn-primary.btn-large(href='/login') 登录
+                a.btn.btn-large(href='/reg') 立即注册
+    else
+        include say
+    include posts

@@ -1,0 +1,21 @@
+extends layout
+
+block content
+    if success
+        div.alert.alert-success= success
+    if error
+        div.alert.alert-error= error
+    form.form-horizontal(method='post')
+        fieldset
+            legend 用户登入
+            div.control-group
+                label.control-label(for='username') 用户名 
+                div.controls
+                    input.input-xlarge#username(type='text' name='username')
+            div.control-group
+                label.control-label(for=password) 口令
+                div.controls
+                    input.input-xlarge#password(type='password' name='password')
+                div.form-actions
+                    button.btn.btn-primary(type='submit') 登入
+
